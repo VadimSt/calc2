@@ -48,7 +48,7 @@
     <button type="button" class="keypadItem" @click="$emit('pressDigit', '0')">
       0
     </button>
-    <button type="button" class="keypadItem" @click="$emit('pressOp', '=')">
+    <button type="button" class="keypadItem" @click="$emit('pressCalc')">
       =
     </button>
     <button type="button" class="keypadItem" @click="$emit('pressOp', '+')">
@@ -72,5 +72,11 @@
 <script setup>
 import { defineEmit } from 'vue'
 
-const emits = defineEmit(['pressDigit', 'pressOp', 'pressCE', 'pressSign'])
+const emits = defineEmit([
+  'pressDigit',
+  'pressOp',
+  'pressCE',
+  'pressSign',
+  'pressCalc',
+])
 </script>

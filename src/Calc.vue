@@ -5,6 +5,8 @@
     @pressDigit="onPressDigit($event)"
     @pressOp="onPressOp($event)"
     @pressCE="onPressCE()"
+    @pressSign="onPressSign()"
+    @pressCalc="onPressCalc()"
   >
   </calc-keypad>
 </template>
@@ -18,6 +20,15 @@ import CalcKeypad from './components/KeyPad.vue'
 const expression = ref('0')
 
 function onPressDigit(e) {
+  let exp = this.expression
+  if (exp == '0') {
+    this.expression = e
+    return
+  }
+  if (exp == '-0') {
+    this.expression = '-' + e
+    return
+  }
   this.expression += e
 }
 function onPressOp(e) {
@@ -25,6 +36,29 @@ function onPressOp(e) {
 }
 function onPressCE() {
   this.expression = '0'
+}
+
+function onPressCalc() {
+  try {
+    const exp = this.expression
+    if (exp[0] == '0') {
+    }
+    this.expression = eval(this.expression) + ''
+  } catch (e) {
+    this.expression = 'error'
+    console.error(e)
+  }
+}
+
+function toggleSign(exp) {
+  if (exp[0] == '-') {
+    return exp.substr(1)
+  }
+  return '-' + exp
+}
+
+function onPressSign() {
+  this.expression = toggleSign(this.expression)
 }
 // This starter template is using Vue 3 experimental <script setup> SFCs
 // Check out https://github.com/vuejs/rfcs/blob/script-setup-2/active-rfcs/0000-script-setup.md
