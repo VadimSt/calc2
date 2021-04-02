@@ -1,4 +1,5 @@
 <template>
+  <label class="labelLog"></label>
   <label class="labelScreen">{{ expression }}</label>
 </template>
 <style scoped>

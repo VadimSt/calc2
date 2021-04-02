@@ -56,6 +56,7 @@
     </button>
   </div>
 </template>
+
 <style scoped>
 .keypadItem {
   width: 100px;
@@ -69,6 +70,7 @@
   height: 75px;
 }
 </style>
+
 <script setup>
 import { defineEmit } from 'vue'
 
@@ -79,4 +81,8 @@ const emits = defineEmit([
   'pressSign',
   'pressCalc',
 ])
+
+function onEnter() {
+  console.log('Press Enter')
+}
 </script>

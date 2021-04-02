@@ -7,6 +7,7 @@
     @pressCE="onPressCE()"
     @pressSign="onPressSign()"
     @pressCalc="onPressCalc()"
+    @keypress="onPressKey($event)"
   >
   </calc-keypad>
 </template>
@@ -18,36 +19,47 @@ import CalcScreen from './components/Screen.vue'
 import CalcKeypad from './components/KeyPad.vue'
 
 const expression = ref('0')
+const expressionLog = ref('')
+
+const addSymbolToExpression = (symbol) => {
+  expression.value += symbol
+}
+
+const setExpression = (symbol) => {
+  expression.value = symbol
+}
 
 function onPressDigit(e) {
-  let exp = this.expression
+  let exp = expression.value
   if (exp == '0') {
-    this.expression = e
+    setExpression(e)
     return
   }
   if (exp == '-0') {
-    this.expression = '-' + e
+    setExpression('-' + e)
     return
   }
-  this.expression += e
+  addSymbolToExpression(e)
+  console.log('Emit event pressDigit')
 }
 function onPressOp(e) {
-  this.expression += e
+  addSymbolToExpression(e)
+  console.log('Emit event pressOp')
 }
 function onPressCE() {
-  this.expression = '0'
+  setExpression('0')
+
+  console.log('Emit event pressCE')
 }
 
 function onPressCalc() {
+  const exp = expression.value
   try {
-    const exp = this.expression
-    if (exp[0] == '0') {
-    }
-    this.expression = eval(this.expression) + ''
+    setExpression(eval(expression.value) + '')
   } catch (e) {
-    this.expression = 'error'
-    console.error(e)
+    setExpression('ERROR')
   }
+  console.log('Emit event pressCalc')
 }
 
 function toggleSign(exp) {
@@ -58,10 +70,38 @@ function toggleSign(exp) {
 }
 
 function onPressSign() {
-  this.expression = toggleSign(this.expression)
+  setExpression(toggleSign(expression.value))
 }
-// This starter template is using Vue 3 experimental <script setup> SFCs
-// Check out https://github.com/vuejs/rfcs/blob/script-setup-2/active-rfcs/0000-script-setup.md
+
+const callEventMap = {
+  0: () => onPressDigit('0'),
+  1: () => onPressDigit('1'),
+  2: () => onPressDigit('2'),
+  3: () => onPressDigit('3'),
+  4: () => onPressDigit('4'),
+  5: () => onPressDigit('5'),
+  6: () => onPressDigit('6'),
+  7: () => onPressDigit('7'),
+  8: () => onPressDigit('8'),
+  9: () => onPressDigit('9'),
+  '+': () => onPressOp('+'),
+  '-': () => onPressOp('-'),
+  '/': () => onPressOp('/'),
+  '*': () => onPressOp('*'),
+  Enter: () => onPressCalc(),
+}
+
+function onPressKey(e) {
+  console.log(e)
+  if (e.target.className == 'keypadItem' && e.key == 'Enter') {
+    e.preventDefault()
+  }
+  try {
+    callEventMap[e.key]()
+  } catch (err) {
+    console.log(err)
+  }
+}
 </script>
 
 <style>
