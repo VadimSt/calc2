@@ -11,6 +11,8 @@
     @pressSign="onPressSign()"
     @pressCalc="onPressCalc()"
     @keypress="onPressKey($event)"
+    @keyup.backspace="onPressBackSpace()"
+    @keyup.esc="onPressEsc()"
   >
   </calc-keypad>
 </template>
@@ -53,6 +55,26 @@ function onPressOp(e) {
 }
 function onPressCE() {
   setExpression('0')
+}
+
+function onPressEsc() {
+  onPressCE()
+}
+
+const expIsNegative = (exp) => exp[0] == '-'
+
+function deletePrevSymbol(exp) {
+  let len = exp.length
+  if (len >= 3) return exp.substr(0, len - 1)
+  if (len < 2) return '0'
+  if (expIsNegative(exp)) return '0'
+  return exp.substr(0, len - 1)
+}
+
+function onPressBackSpace() {
+  console.log('press Backspace')
+  setExpression(deletePrevSymbol(expression.value))
+  // onPressCE()
 }
 
 function onPressCalc() {
@@ -116,6 +138,7 @@ const callEventMap = {
 }
 
 function onPressKey(e) {
+  console.log(e)
   let keyIsInMap = keyInMap(e.key)
   if (!keyIsInMap) {
     return
