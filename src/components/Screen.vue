@@ -1,8 +1,13 @@
 <template>
-  <label class="labelLog"></label>
+  <label class="labelLog">{{ expressionLog }}</label>
   <label class="labelScreen">{{ expression }}</label>
 </template>
 <style scoped>
+.labelLog {
+  display: block;
+  text-align: right;
+  padding: 5px;
+}
 .labelScreen {
   display: block;
   border-radius: 5px;
@@ -15,5 +20,5 @@
 <script setup>
 import { defineProps } from 'vue'
 
-const props = defineProps({ expression: String })
+const props = defineProps({ expression: String, expressionLog: String })
 </script>

@@ -1,5 +1,8 @@
 <template>
-  <calc-screen :expression="expression"></calc-screen>
+  <calc-screen
+    :expression="expression"
+    :expressionLog="expressionLog"
+  ></calc-screen>
   <calc-keypad
     class="calcKeypad"
     @pressDigit="onPressDigit($event)"
@@ -29,6 +32,10 @@ const setExpression = (symbol) => {
   expression.value = symbol
 }
 
+const setExpressionLog = (exp) => {
+  expressionLog.value = exp
+}
+
 function onPressDigit(e) {
   let exp = expression.value
   if (exp == '0') {
@@ -40,26 +47,21 @@ function onPressDigit(e) {
     return
   }
   addSymbolToExpression(e)
-  console.log('Emit event pressDigit')
 }
 function onPressOp(e) {
   addSymbolToExpression(e)
-  console.log('Emit event pressOp')
 }
 function onPressCE() {
   setExpression('0')
-
-  console.log('Emit event pressCE')
 }
 
 function onPressCalc() {
   const exp = expression.value
   try {
-    setExpression(eval(expression.value) + '')
+    setExpression(eval(exp) + '')
   } catch (e) {
     setExpression('ERROR')
   }
-  console.log('Emit event pressCalc')
 }
 
 function toggleSign(exp) {
@@ -71,6 +73,28 @@ function toggleSign(exp) {
 
 function onPressSign() {
   setExpression(toggleSign(expression.value))
+}
+
+const keysMap = [
+  '0',
+  '1',
+  '2',
+  '3',
+  '4',
+  '5',
+  '6',
+  '7',
+  '8',
+  '9',
+  '+',
+  '-',
+  '/',
+  '*',
+  'Enter',
+]
+
+const keyInMap = (key) => {
+  return keysMap.some((element) => element == key)
 }
 
 const callEventMap = {
@@ -92,15 +116,14 @@ const callEventMap = {
 }
 
 function onPressKey(e) {
-  console.log(e)
+  let keyIsInMap = keyInMap(e.key)
+  if (!keyIsInMap) {
+    return
+  }
   if (e.target.className == 'keypadItem' && e.key == 'Enter') {
     e.preventDefault()
   }
-  try {
-    callEventMap[e.key]()
-  } catch (err) {
-    console.log(err)
-  }
+  callEventMap[e.key]()
 }
 </script>
 
