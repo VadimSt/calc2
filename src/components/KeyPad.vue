@@ -1,8 +1,14 @@
 <template>
   <div class="keypadWrapper">
-    <div class="blankItem"></div>
-    <div class="blankItem"></div>
-    <div class="blankItem"></div>
+    <button type="button" class="keypadItem" @click="$emit('pressSQR')">
+      x^2
+    </button>
+    <button type="button" class="keypadItem" @click="$emit('pressOBR')">
+      1/x
+    </button>
+    <button type="button" class="keypadItem" @click="$emit('pressRND')">
+      RND
+    </button>
     <button type="button" class="keypadItem" @click="$emit('pressCE')">
       CE
     </button>
@@ -80,6 +86,10 @@ const emits = defineEmit([
   'pressCE',
   'pressSign',
   'pressCalc',
+  'pressRND',
+  'pressTRUNC',
+  'pressOBR',
+  'pressSQR'
 ])
 
 function onEnter() {

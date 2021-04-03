@@ -10,9 +10,13 @@
     @pressCE="onPressCE()"
     @pressSign="onPressSign()"
     @pressCalc="onPressCalc()"
+    @pressRND="onPressRound()"
+    @pressOBR="onPressOBR()"
+    @pressSQR="onPressSQR()"
     @keypress="onPressKey($event)"
-    @keyup.backspace="onPressBackSpace()"
+    @keyup.delete="onPressBackSpace()"
     @keyup.esc="onPressEsc()"
+
   >
   </calc-keypad>
 </template>
@@ -61,6 +65,36 @@ function onPressEsc() {
   onPressCE()
 }
 
+function onPressOBR() {
+  let exp = expression.value
+  exp = '1/'+exp
+  setExpression(exp)
+}
+
+const sqr = x => x*x
+
+const round = x => Math.round(x)
+const trunc = x => Math.trunc(x)
+
+
+function onPressSQR() {
+  let exp = expression.value
+  exp = 'sqr('+exp+')'
+  setExpression(exp)
+}
+
+function onPressRound() {
+  let exp = expression.value
+  exp = 'round('+exp+')'
+  setExpression(exp)
+}
+
+function onPressTrunc() {
+  let exp = expression.value
+  exp = 'trunc('+exp+')'
+  setExpression(exp)
+}
+
 const expIsNegative = (exp) => exp[0] == '-'
 
 function deletePrevSymbol(exp) {
@@ -72,18 +106,20 @@ function deletePrevSymbol(exp) {
 }
 
 function onPressBackSpace() {
-  console.log('press Backspace')
   setExpression(deletePrevSymbol(expression.value))
-  // onPressCE()
+}
+
+function evalExpression(exp) {
+  try {
+    return eval(exp)+''
+  } catch (e) {
+    return 'ERROR'
+  }
 }
 
 function onPressCalc() {
   const exp = expression.value
-  try {
-    setExpression(eval(exp) + '')
-  } catch (e) {
-    setExpression('ERROR')
-  }
+  setExpression(evalExpression(exp))
 }
 
 function toggleSign(exp) {
@@ -138,7 +174,6 @@ const callEventMap = {
 }
 
 function onPressKey(e) {
-  console.log(e)
   let keyIsInMap = keyInMap(e.key)
   if (!keyIsInMap) {
     return
