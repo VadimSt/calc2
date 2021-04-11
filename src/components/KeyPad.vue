@@ -1,7 +1,7 @@
 <template>
   <div class="keypadWrapper">
     <button type="button" class="keypadItem" @click="$emit('pressSQR')">
-      x^2
+      x**2
     </button>
     <button type="button" class="keypadItem" @click="$emit('pressOBR')">
       1/x
@@ -89,7 +89,7 @@ const emits = defineEmit([
   'pressRND',
   'pressTRUNC',
   'pressOBR',
-  'pressSQR'
+  'pressSQR',
 ])
 
 function onEnter() {

@@ -1,34 +1,49 @@
 <template>
-  <calc-screen
-    :expression="expression"
-    :expressionLog="expressionLog"
-  ></calc-screen>
-  <calc-keypad
-    class="calcKeypad"
-    @pressDigit="onPressDigit($event)"
-    @pressOp="onPressOp($event)"
-    @pressCE="onPressCE()"
-    @pressSign="onPressSign()"
-    @pressCalc="onPressCalc()"
-    @pressRND="onPressRound()"
-    @pressOBR="onPressOBR()"
-    @pressSQR="onPressSQR()"
-    @keypress="onPressKey($event)"
-    @keyup.delete="onPressBackSpace()"
-    @keyup.esc="onPressEsc()"
-
-  >
-  </calc-keypad>
+  <div class="calcWrapper" @keyup="onPressKeyGlobal($event)">
+    <key-press
+      key-event="keyup"
+      :multiple-keys="multipleKeys"
+      @success="onSuccess"
+    ></key-press>
+    <calc-screen
+      :expression="expression"
+      :expressionLog="expressionLog"
+    ></calc-screen>
+    <calc-keypad
+      ref="keypad"
+      class="calcKeypad"
+      @pressDigit="onPressDigit($event)"
+      @pressOp="onPressOp($event)"
+      @pressCE="onPressCE()"
+      @pressSign="onPressSign()"
+      @pressCalc="onPressCalc()"
+      @pressRND="onPressRound()"
+      @pressOBR="onPressOBR()"
+      @pressSQR="onPressSQR()"
+      @keypress="onPressKey($event)"
+      @keyup.delete="onPressBackSpace()"
+      @keyup.esc="onPressEsc()"
+    >
+    </calc-keypad>
+  </div>
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { onMounted, ref, defineAsyncComponent } from 'vue'
 
 import CalcScreen from './components/Screen.vue'
 import CalcKeypad from './components/KeyPad.vue'
+import { multipleKeys } from './keyPress'
 
+const KeyPress = defineAsyncComponent(() => import('vue3-keypress'))
 const expression = ref('0')
 const expressionLog = ref('')
+
+
+
+function onPressKeyGlobal(e) {
+  console.log(e)
+}
 
 const addSymbolToExpression = (symbol) => {
   expression.value += symbol
@@ -57,41 +72,45 @@ function onPressDigit(e) {
 function onPressOp(e) {
   addSymbolToExpression(e)
 }
-function onPressCE() {
+
+function clearExpression(){
   setExpression('0')
 }
 
-function onPressEsc() {
-  onPressCE()
+function onPressCE() {
+  clearExpression()
+}
+
+function onPressEscape() {
+  clearExpression()
 }
 
 function onPressOBR() {
   let exp = expression.value
-  exp = '1/'+exp
+  exp = '1/' + exp
   setExpression(exp)
 }
 
-const sqr = x => x*x
+const sqr = (x) => x * x
 
-const round = x => Math.round(x)
-const trunc = x => Math.trunc(x)
-
+const round = (x) => Math.round(x)
+const trunc = (x) => Math.trunc(x)
 
 function onPressSQR() {
   let exp = expression.value
-  exp = 'sqr('+exp+')'
+  exp = exp + '**2'
   setExpression(exp)
 }
 
 function onPressRound() {
   let exp = expression.value
-  exp = 'round('+exp+')'
+  exp = 'round(' + exp + ')'
   setExpression(exp)
 }
 
 function onPressTrunc() {
   let exp = expression.value
-  exp = 'trunc('+exp+')'
+  exp = 'trunc(' + exp + ')'
   setExpression(exp)
 }
 
@@ -109,9 +128,13 @@ function onPressBackSpace() {
   setExpression(deletePrevSymbol(expression.value))
 }
 
+function onPressDelete() {
+  clearExpression()
+}
+
 function evalExpression(exp) {
   try {
-    return eval(exp)+''
+    return eval(exp) + ''
   } catch (e) {
     return 'ERROR'
   }
@@ -133,26 +156,17 @@ function onPressSign() {
   setExpression(toggleSign(expression.value))
 }
 
-const keysMap = [
-  '0',
-  '1',
-  '2',
-  '3',
-  '4',
-  '5',
-  '6',
-  '7',
-  '8',
-  '9',
-  '+',
-  '-',
-  '/',
-  '*',
-  'Enter',
-]
+function isKeyRegistered(someKey) {
+  return Object.keys(callEventMap).some((key) => key == someKey)
+}
 
-const keyInMap = (key) => {
-  return keysMap.some((element) => element == key)
+function onSuccess(res) {
+  let key = res.event.key
+
+  if (!isKeyRegistered(key)) {
+    return console.log('Клавиша не зарегистрирована')
+  }
+  callEventMap[key]()
 }
 
 const callEventMap = {
@@ -170,10 +184,15 @@ const callEventMap = {
   '-': () => onPressOp('-'),
   '/': () => onPressOp('/'),
   '*': () => onPressOp('*'),
-  Enter: () => onPressCalc(),
+  'Enter': () => onPressCalc(),
+  'Delete': () => onPressDelete(),
+  'Escape': () => onPressEscape(),
+  'Backspace': () => onPressBackSpace(),
+
 }
 
 function onPressKey(e) {
+  console.log(e)
   let keyIsInMap = keyInMap(e.key)
   if (!keyIsInMap) {
     return

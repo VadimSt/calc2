@@ -9,7 +9,9 @@
     "prettier": "prettier --write src/**/*.vue"
   },
   "dependencies": {
-    "vue": "^3.0.5"
+    "keycodes-map": "^1.0.2",
+    "vue": "^3.0.5",
+    "vue3-keypress": "^3.0.2"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^1.1.5",

@@ -1,4 +1,6 @@
-import { createApp } from "vue";
-import Calc from "./Calc.vue";
+import { createApp, defineAsyncComponent } from 'vue'
 
-createApp(Calc).mount("#calc");
+import Calc from './Calc.vue'
+
+const calc = createApp(Calc)
+calc.mount('#calc')
